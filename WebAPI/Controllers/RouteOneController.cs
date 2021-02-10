@@ -22,16 +22,19 @@ namespace WebAPI.Controllers
 
             using (var response = await client.GetAsync("https://www.bancoprovincia.com.ar/Principal/Dolar"))
             {
-                string apiResponse = await response.Content.ReadAsStringAsync();              
+                string apiResponse = await response.Content.ReadAsStringAsync();
                 factor = Convert.ToDecimal(JsonConvert.DeserializeObject<List<string>>(apiResponse)[0].Replace('.', ','));
             }
 
-            if (isocode.ToUpper() == Enums.IsoCodes.BRL.ToString())
+            if (isocode != null)
+                isocode = isocode.ToUpper();
+
+            if (isocode == Enums.IsoCodes.BRL.ToString())
                 return factor / 4;
-            else if (isocode.ToUpper() == Enums.IsoCodes.USD.ToString())
+            else if (isocode == Enums.IsoCodes.USD.ToString())
                 return factor;
             else
-                return new JsonResult(new { Success = false, Message = "ISO CODE is not supported!" });
+                return new JsonResult("ISO CODE is not supported!");
         }
     }
 }

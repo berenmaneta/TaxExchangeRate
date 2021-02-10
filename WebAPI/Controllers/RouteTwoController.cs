@@ -44,14 +44,17 @@ namespace WebAPI.Controllers
                     factor = Convert.ToDecimal(JsonConvert.DeserializeObject<List<string>>(apiResponse)[0].Replace('.', ','));
                 }
 
-                if (model.IsoCode.ToUpper() == Enums.IsoCodes.BRL.ToString())
+                if (model.IsoCode != null)
+                    model.IsoCode = model.IsoCode.ToUpper();
+
+                if (model.IsoCode == Enums.IsoCodes.BRL.ToString())
                     factor /= 4;
                 else if(model.IsoCode.ToUpper() != Enums.IsoCodes.USD.ToString())
                     return new JsonResult(new { Success = false, Message = "ISO CODE is not supported!" });
 
                 Purchase entity = new Purchase();
                 entity.IdUser = model.IdUser;
-                entity.IsoCode = model.IsoCode.ToUpper();
+                entity.IsoCode = model.IsoCode;
                 entity.Value = model.ValueARG / factor;
                 entity.TransactionDate = DateTime.Now;
 
